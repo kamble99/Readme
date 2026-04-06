@@ -1,0 +1,82 @@
+from queue import PriorityQueue
+def a_star(graph, start, goal, heuristic):
+open_list = PriorityQueue()
+open_list.put((0, start))
+g_cost = {start: 0}
+parent = {start: None}
+while not open_list.empty():
+_, current = open_list.get()
+if current == goal:
+path = []
+while current:
+path.append(current)
+current = parent[current]
+return path[::-1]
+for neighbor, cost in graph[current]:
+new_cost = g_cost[current] + cost
+if neighbor not in g_cost or new_cost < g_cost[neighbor]:
+g_cost[neighbor] = new_cost
+f_cost = new_cost + heuristic[neighbor]
+open_list.put((f_cost, neighbor))
+parent[neighbor] = current
+return None
+# Graph representation
+graph = {
+'A': [('B', 1), ('C', 3)],
+'B': [('D', 3), ('E', 1)],
+'C': [('F', 5)],
+'D': [],
+'E': [('G', 2)],
+'F': [('G', 2)],
+'G': []
+}
+heuristic = {
+'A': 7, 'B': 6, 'C': 2,
+'D': 1, 'E': 2, 'F': 3, 'G': 0
+}
+path = a_star(graph, 'A', 'G', heuristic)
+print("Shortest Path using A*:", path)
+Program for AO* Algorithm (Python)
+class AOStar:
+def __init__(self, graph, heuristic):
+self.graph = graph
+self.h = heuristic
+self.status = {}
+self.parent = {}
+self.solution = {}
+def apply_ao_star(self, node):
+print("\nProcessing Node:", node)
+if node not in self.graph:
+return
+min_cost = float('inf')
+best_children = None
+for children in self.graph[node]:
+cost = 0
+for child, weight in children:
+cost += self.h[child] + weight
+if cost < min_cost:
+min_cost = cost
+best_children = children
+self.h[node] = min_cost
+self.solution[node] = best_children
+for child, _ in best_children:
+self.parent[child] = node
+self.apply_ao_star(child)
+# AND-OR Graph
+graph = {
+'A': [[('B', 1), ('C', 1)], [('D', 1)]], # OR branches
+'B': [[('E', 1)]],
+'C': [[('F', 1)]],
+'D': [],
+'E': [],
+'F': []
+}
+heuristic = {
+'A': 10, 'B': 4, 'C': 4,
+'D': 3, 'E': 1, 'F': 1
+}
+ao = AOStar(graph, heuristic)
+ao.apply_ao_star('A')
+print("\nSolution Graph:")
+for node in ao.solution:
+print(node, "->", ao.solution[node])
