@@ -1,0 +1,38 @@
+Algorithm Steps
+Step 1: Sense the current location and status
+Step 2: IF current location is dirty
+THEN Suck dirt
+ELSE IF current location is A
+THEN Move Right
+ELSE IF current location is B
+THEN Move Left
+Step 3: Repeat until both rooms are clean
+Program:
+# Simple Reflex Agent for Vacuum Cleaner Environment
+def simple_reflex_agent(percept):
+location, status = percept
+if status == "Dirty":
+return "Suck"
+Environment simulation
+def environment():
+# Initial state
+location = "A"
+environment_status = {
+"A": "Dirty",
+"B": "Dirty"
+}
+for step in range(5):
+percept = (location, environment_status[location])
+action = simple_reflex_agent(percept)
+print(f"Step {step + 1}")
+print(f"Percept: Location = {location}, Status = {environment_status[location]}")
+print(f"Action: {action}\n")
+# Perform action
+if action == "Suck":
+environment_status[location] = "Clean"
+elif action == "Move Right":
+location = "B"
+elif action == "Move Left":
+location = "A"
+# Run the environment
+environment()
