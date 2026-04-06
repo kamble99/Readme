@@ -1,0 +1,94 @@
+🔹 Algorithm Steps
+1. Initialize Knowledge Base (KB)
+2. Place agent at starting position (0,0)
+3. Loop until goal is achieved:
+a. Perceive environment
+b. Add percepts to KB
+c. Apply inference rules
+d. Mark safe and unsafe cells
+e. Choose safe unvisited cell
+f. Move agent
+4. If Glitter perceived:
+Grab gold and exit
+# Knowledge-Based Agent for Wumpus World
+class WumpusWorld:
+def __init__(self):
+self.size = 4
+self.wumpus = (1, 2)
+self.pits = [(3, 0), (3, 2)]
+self.gold = (2, 2)
+def percepts(self, cell):
+percepts = []
+x, y = cell
+for pit in self.pits:
+if abs(pit[0] - x) + abs(pit[1] - y) == 1:
+percepts.append("Breeze")
+if abs(self.wumpus[0] - x) + abs(self.wumpus[1] - y) == 1:
+percepts.append("Stench")
+if cell == self.gold:
+percepts.append("Glitter")
+return percepts
+class KnowledgeBasedAgent:
+def __init__(self):
+self.position = (0, 0)
+self.visited = set()
+self.safe = set([(0, 0)])
+self.possible_pits = set()
+self.possible_wumpus = set()
+self.gold_found = False
+def get_neighbors(self, cell):
+x, y = cell
+neighbors = []
+for dx, dy in [(-1,0),(1,0),(0,-1),(0,1)]:
+nx, ny = x + dx, y + dy
+if 0 <= nx < 4 and 0 <= ny < 4:
+neighbors.append((nx, ny))
+return neighbors
+def update_knowledge(self, percepts):
+self.visited.add(self.position)
+neighbors = self.get_neighbors(self.position)
+# If no Breeze or Stench, all neighbors are safe
+if "Breeze" not in percepts and "Stench" not in percepts:
+for n in neighbors:
+self.safe.add(n)
+self.possible_pits.discard(n)
+self.possible_wumpus.discard(n)
+# Breeze implies possible pit
+if "Breeze" in percepts:
+for n in neighbors:
+if n not in self.safe:
+self.possible_pits.add(n)
+Stench implies possible Wumpus
+if "Stench" in percepts:
+for n in neighbors:
+if n not in self.safe:
+self.possible_wumpus.add(n)
+# Glitter means gold found
+if "Glitter" in percepts:
+self.gold_found = True
+def choose_action(self):
+# Choose safe, unvisited cell only
+for cell in sorted(self.safe):
+if cell not in self.visited:
+return cell
+return None
+# -------- Simulation --------
+world = WumpusWorld()
+agent = KnowledgeBasedAgent()
+print("Knowledge-Based Wumpus World Agent\n")
+while not agent.gold_found:
+percepts = world.percepts(agent.position)
+print(f"Agent at {agent.position}, Percepts: {percepts}")
+agent.update_knowledge(percepts)
+if agent.gold_found:
+print("\nGold Found! Agent Grabs Gold.")
+break
+next_move = agent.choose_action()
+if next_move is None:
+print("\nNo safe moves available. Agent stops.")
+break
+agent.position = next_move
+print("\nVisited Cells:", agent.visited)
+print("Safe Cells:", agent.safe)
+print("Possible Pit Cells:", agent.possible_pits)
+print("Possible Wumpus Cells:", agent.possible_wumpus)
