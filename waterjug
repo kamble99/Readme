@@ -1,0 +1,28 @@
+from collections import deque
+# Jug capacities
+jug1 = 4
+jug2 = 3
+goal = 2
+def water_jug_problem():
+visited = set()
+queue = deque([(0, 0)])
+while queue:
+x, y = queue.popleft()
+print("Current State:", (x, y))
+if x == goal:
+print("Goal Achieved!")
+return
+visited.add((x, y))
+# Possible next states
+next_states = [
+(jug1, y), # Fill Jug1
+(x, jug2), # Fill Jug2
+(0, y), # Empty Jug1
+(x, 0), # Empty Jug2
+(x - min(x, jug2 - y), y + min(x, jug2 - y)), # Jug1 -> Jug2
+(x + min(y, jug1 - x), y - min(y, jug1 - x)) # Jug2 -> Jug1
+]
+for state in next_states:
+if state not in visited:
+queue.append(state)
+water_jug_problem()
